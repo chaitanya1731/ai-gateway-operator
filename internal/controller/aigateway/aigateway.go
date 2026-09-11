@@ -28,6 +28,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/opendatahub-io/opendatahub-operator/v2/api/common"
@@ -64,6 +65,13 @@ const (
 	// maasConfigName is the singleton Config anchor created by the maas-controller.
 	maasConfigName = "default"
 )
+
+// maasConfigGVK identifies the MaaS Config CRD for dynamic watch registration.
+var maasConfigGVK = schema.GroupVersionKind{
+	Group:   "maas.opendatahub.io",
+	Version: "v1alpha1",
+	Kind:    "Config",
+}
 
 // deriveInfrastructureNamespace maps the applications namespace to the infrastructure
 // namespace used for maas-api, postgres, and cross-namespace secret migration.
