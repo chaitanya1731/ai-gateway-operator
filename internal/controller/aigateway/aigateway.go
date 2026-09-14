@@ -66,6 +66,13 @@ const (
 	maasConfigName = "default"
 )
 
+// maasConfigGVK identifies the MaaS Config CRD for dynamic watch registration.
+var maasConfigGVK = schema.GroupVersionKind{
+	Group:   "maas.opendatahub.io",
+	Version: "v1alpha1",
+	Kind:    "Config",
+}
+
 // deriveInfrastructureNamespace maps the applications namespace to the infrastructure
 // namespace used for maas-api, postgres, and cross-namespace secret migration.
 // Mirrors the logic in models-as-a-service maas-controller/cmd/manager/main.go:deriveInfraNamespace.
