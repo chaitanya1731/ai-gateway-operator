@@ -70,6 +70,10 @@ get-manifests: ## Download component manifests.
 verify-manifest-flags: ## Check vendored manifest flags against the images that run with them.
 	./hack/scripts/verify-manifest-flags.sh
 
+.PHONY: update-refs-shas
+update-refs-shas: ## Bump pins in get-manifests.sh to tip of main (requires network).
+	./hack/scripts/update-manifest-shas.sh
+
 .PHONY: deps
 deps: ## Tidy and verify Go module dependencies.
 	go mod tidy
