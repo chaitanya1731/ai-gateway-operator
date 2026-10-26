@@ -71,7 +71,7 @@ verify-manifest-flags: ## Check vendored manifest flags against the images that 
 	./hack/scripts/verify-manifest-flags.sh
 
 .PHONY: update-refs-shas
-update-refs-shas: ## Bump pins in get-manifests.sh to tip of main (requires network).
+update-refs-shas: ## Bump branch@sha refs in get-manifests.sh to the tip of each branch (requires network).
 	./hack/scripts/update-manifest-shas.sh
 
 .PHONY: deps

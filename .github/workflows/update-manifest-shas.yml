@@ -52,14 +52,16 @@ jobs:
           title: "chore: update manifest commit SHAs"
           labels: auto-bump-manifests
           body: |
-            This PR updates sub-component manifest pins in `hack/scripts/get-manifests.sh` to the tip of `main` on each upstream and refreshes the vendored trees under `config/manifests/`.
+            This PR bumps the `<branch>@<sha>` refs in `hack/scripts/get-manifests.sh` to the tip of each ref's branch (ODH refs on `opendatahub-io`, RHDS refs on `red-hat-data-services`) and refreshes the vendored trees under `config/manifests/` from the ODH refs.
 
-            Image builds `COPY` those vendored trees (downstream cannot fetch GitHub at build time).
+            Image builds `COPY` those vendored trees (downstream cannot fetch GitHub at build time). RHDS refs are recorded but not used for packaging yet.
             ${{ steps.update-shas.outputs.fetch-failed == 'true' && format('
 
             > [!WARNING]
             > These refs failed to fetch from GitHub and were **not** updated:
             > `{0}`
+
+            The scheduled run is marked as failed. Please investigate.
             ', steps.update-shas.outputs.failed-components) || '' }}
           branch: sync/upgrade-manifest-shas
           delete-branch: true

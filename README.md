@@ -17,17 +17,22 @@ A Kubernetes operator that manages AI Gateway components for [Open Data Hub](htt
 
 - **[Enabling Models as a Service](docs/enabling-models-as-a-service.md)** - Deploy and manage MaaS for multi-tenant model inference
 - **[Architecture](docs/architecture.md)** - How ai-gateway-operator manages sub-components
+- **[Contributing](CONTRIBUTING.md)** - Development setup, CI, and test ownership boundaries (AIGO / AIGC / MaaS)
 
 ## Updating Component Manifests
 
 This operator vendors manifests from sub-components into `config/manifests/`. These files are checked into the repository because the container build expects them in the source tree (`COPY config/manifests/` in the Dockerfile). Manifests can't be fetched at build time because downstream builds are isolated from network.
 
-A daily GitHub Actions workflow (`.github/workflows/update-manifest-shas.yml`) bumps those SHAs to the tip of `main` on each upstream, refreshes the trees, and opens a PR. When bumping manually, commit **both** the pin change and the refreshed trees:
+Each component in `hack/scripts/get-manifests.sh` pins an ODH ref and an RHDS ref as `<branch>@<sha>`. The branch is the one whose Konflux build produces the image the manifests run with: `stable` for `maascontroller` and `aigatewaycontroller`, `main` for `batchgateway` and `aigrid`, and the current `rhoai-3.x` release branch for RHDS.
+
+A daily GitHub Actions workflow (`.github/workflows/update-manifest-shas.yml`) bumps every ref to the tip of its branch, refreshes the trees, and opens a PR. When bumping manually, commit **both** the pin change and the refreshed trees:
 
 ```bash
-make update-refs-shas   # rewrite pins to latest commits on main branch
+make update-refs-shas   # rewrite each ref to the latest commit on its branch
 make get-manifests      # download into config/manifests/<component>/
 ```
+
+> **Note:** the vendored trees are always fetched from the ODH refs. RHDS refs are kept up to date but are not used for packaging yet, so a downstream-only manifest change on `rhoai-3.x` does not reach the RHOAI image until the RHDS build fetches or vendors the RHDS trees.
 
 `config/manifests/ai-gateway-operator/` is this operator's own deploy tree for opendatahub-operator (not a sub-component pin).
 
