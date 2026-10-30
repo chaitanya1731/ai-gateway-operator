@@ -32,7 +32,7 @@ make update-refs-shas   # rewrite each ref to the latest commit on its branch
 make get-manifests      # download into config/manifests/<component>/
 ```
 
-> **Note:** the vendored trees are always fetched from the ODH refs. RHDS refs are kept up to date but are not used for packaging yet, so a downstream-only manifest change on `rhoai-3.x` does not reach the RHOAI image until the RHDS build fetches or vendors the RHDS trees.
+> **Note:** nothing in this repo sets `ODH_PLATFORM_TYPE`, so the vendored trees are in practice fetched from the ODH refs (setting that variable fetches the RHDS refs instead). RHDS refs are kept up to date but are not used for packaging yet, so a downstream-only manifest change on `rhoai-3.x` does not reach the RHOAI image until the RHDS build fetches or vendors the RHDS trees.
 
 `config/manifests/ai-gateway-operator/` is this operator's own deploy tree for opendatahub-operator (not a sub-component pin).
 

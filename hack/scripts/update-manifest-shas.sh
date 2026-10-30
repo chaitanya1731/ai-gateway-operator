@@ -68,7 +68,11 @@ rewrite_component() {
     local file="$1" name="$2" new_value="$3"
     local tmp
     tmp="$(mktemp)"
-    if ! sed -E "s#^([[:space:]]*\\[${name}\\]=\")[^\"]*(\".*)\$#\\1${new_value}\\2#" "${file}" > "${tmp}"; then
+    # Escape sed-special chars in the replacement (& and the # delimiter) so a
+    # branch name like release&fix cannot corrupt or abort the rewrite.
+    local escaped="${new_value//&/\\&}"
+    escaped="${escaped//#/\\#}"
+    if ! sed -E "s#^([[:space:]]*\\[${name}\\]=\")[^\"]*(\".*)\$#\\1${escaped}\\2#" "${file}" > "${tmp}"; then
         rm -f "${tmp}"
         return 1
     fi

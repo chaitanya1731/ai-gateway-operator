@@ -18,22 +18,12 @@ jobs:
     permissions:
       contents: read
     steps:
-      # Base the run on the open bump branch when there is one: refs that failed
-      # to resolve in an earlier run exist only there, and starting from main
-      # would drop those bumps from the PR (create-pull-request resets the
-      # branch to the checkout plus the new edits).
-      - name: Pick base ref
-        id: baseref
-        run: |
-          if GIT_TERMINAL_PROMPT=0 git ls-remote --exit-code "${{ github.server_url }}/${{ github.repository }}.git" refs/heads/sync/upgrade-manifest-shas >/dev/null 2>&1; then
-            echo "ref=sync/upgrade-manifest-shas" >> "$GITHUB_OUTPUT"
-          else
-            echo "ref=${GITHUB_REF}" >> "$GITHUB_OUTPUT"
-          fi
+      # Always start from main: basing a run on the open sync branch would make
+      # it the default PR base too, which create-pull-request rejects. A ref
+      # whose fetch failed simply comes back on the next run.
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ steps.baseref.outputs.ref }}
           persist-credentials: false
 
       # App token so the opened PR can run CI without manual approval
