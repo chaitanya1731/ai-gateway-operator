@@ -28,11 +28,11 @@ write_output() {
 latest_sha() {
     local org="$1" repo="$2" branch="$3"
     local line sha
-    if ! line="$(git ls-remote "https://github.com/${org}/${repo}.git" "refs/heads/${branch}" 2>/dev/null)"; then
+    if ! line="$(GIT_TERMINAL_PROMPT=0 git -c http.lowSpeedLimit=1 -c http.lowSpeedTime=30 ls-remote "https://github.com/${org}/${repo}.git" "refs/heads/${branch}")"; then
         echo "[WARN] Failed to ls-remote ${org}/${repo}@${branch}" >&2
         return 1
     fi
-    sha="$(awk '{print $1; exit}' <<< "${line}")"
+    sha="$(awk -v ref="refs/heads/${branch}" '$2 == ref {print $1; exit}' <<< "${line}")"
     if [[ -z "${sha}" || ! "${sha}" =~ ^[0-9a-f]{40}$ ]]; then
         echo "[WARN] No SHA for ${org}/${repo}@${branch}" >&2
         return 1

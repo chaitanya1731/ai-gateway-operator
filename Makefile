@@ -71,8 +71,9 @@ verify-manifest-flags: ## Check vendored manifest flags against the images that 
 	./hack/scripts/verify-manifest-flags.sh
 
 .PHONY: update-refs-shas
-update-refs-shas: ## Bump branch@sha refs in get-manifests.sh to the tip of each branch (requires network).
+update-refs-shas: ## Bump branch@sha refs in get-manifests.sh to the tip of each branch and refresh the vendored trees (requires network).
 	./hack/scripts/update-manifest-shas.sh
+	./hack/scripts/get-manifests.sh
 
 .PHONY: deps
 deps: ## Tidy and verify Go module dependencies.
