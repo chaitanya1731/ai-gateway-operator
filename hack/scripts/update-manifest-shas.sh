@@ -45,12 +45,6 @@ latest_sha() {
 bump_ref() {
     local current_ref="$1" org="$2" repo="$3"
     local branch="${current_ref%@*}" current_sha="${current_ref##*@}"
-    # manual@<sha> refs are pinned by hand (e.g. release candidates) and never bumped.
-    if [[ "${branch}" == "manual" ]]; then
-        echo "  ${org}: manual pin, leaving as-is (${current_sha:0:8})" >&2
-        echo "${current_ref}"
-        return 0
-    fi
     if [[ "${current_ref}" != *@* || -z "${branch}" || ! "${current_sha}" =~ ^[0-9a-f]{40}$ ]]; then
         echo "[WARN] ${org}/${repo}: ref '${current_ref}' is not <branch>@<sha>" >&2
         return 1
@@ -108,6 +102,13 @@ if [[ ${#ENTRIES[@]} -eq 0 ]]; then
     exit 1
 fi
 
+# Components excluded from automated bumps: their refs stay <branch>@<sha> in
+# get-manifests.sh (accurate provenance) and are advanced by hand — e.g.
+# aigrid pins deliberate release candidates rather than the tip of main.
+declare -A SKIP_BUMP=(
+    [aigrid]=1
+)
+
 failed=()
 changed=0
 tmp_script="$(mktemp)"
@@ -116,6 +117,10 @@ cp -p "${MANIFESTS_SCRIPT}" "${tmp_script}"
 
 for entry in "${ENTRIES[@]}"; do
     IFS='|' read -r name repo src_path odh_ref rhds_ref <<< "${entry}"
+    if [[ -n "${SKIP_BUMP[${name}]:-}" ]]; then
+        echo "Checking ${name} (${repo}) — excluded from automated bumps (SKIP_BUMP), leaving as-is"
+        continue
+    fi
     echo "Checking ${name} (${repo})"
 
     new_odh="${odh_ref}"

@@ -105,8 +105,8 @@ fetch_component() {
 #   - ODH: `stable` for components whose odh-stable image is built from
 #     `stable` (maascontroller, aigatewaycontroller), `main` for components
 #     that build odh-stable from `main` (batchgateway).
-#   - `manual@<sha>` opts a ref out of automated bumps; advanced by hand
-#     (aigrid pins deliberate release candidates).
+#   - aigrid is excluded from automated bumps (its pins are deliberate
+#     release candidates); see SKIP_BUMP in update-manifest-shas.sh.
 #   - RHDS: the current RHOAI release branch (rhoai-3.x); RHDS `main` builds
 #     no images. Bump the branch name here when a new release branch is cut.
 #
@@ -124,7 +124,7 @@ declare -A COMPONENTS=(
     [batchgateway]="llm-d-batch-gateway-operator|config|main@93f1c2c021a7ebae6f44c9e1dd05d7c9a34a46e8|rhoai-3.6@dccb5184ef345018d45474ef3ed492179a0ead55"
     [maascontroller]="models-as-a-service|deployment/base/maas-controller|stable@761884ed5a5d8939ca23a84d144821e9615d7115|rhoai-3.6@05d7c7920087b646d394a907967dac9856a4fb57"
     [aigatewaycontroller]="ai-gateway-controller|config/self|stable@ecda771a9a231002b13176058a81ad820eb2c2b4|rhoai-3.6@fd94ad52cbc730aedfb531d9344555185806d05e"
-    [aigrid]="praxis-ai-grid-operator|deploy|manual@02d6bc4ebcde8673be3ff80e099dbc21a5b7607a|manual@05c8ac3e2e68b82faa91e1696e01a2e293c65400"
+    [aigrid]="praxis-ai-grid-operator|deploy|main@02d6bc4ebcde8673be3ff80e099dbc21a5b7607a|rhoai-3.6@05c8ac3e2e68b82faa91e1696e01a2e293c65400"
 )
 
 for component_name in "${!COMPONENTS[@]}"; do
