@@ -23,7 +23,7 @@ A Kubernetes operator that manages AI Gateway components for [Open Data Hub](htt
 
 This operator vendors manifests from sub-components into `config/manifests/`. These files are checked into the repository because the container build expects them in the source tree (`COPY config/manifests/` in the Dockerfile). Manifests can't be fetched at build time because downstream builds are isolated from network.
 
-Each component in `hack/scripts/get-manifests.sh` pins an ODH ref and an RHDS ref as `<branch>@<sha>`. The branch is the one whose Konflux build produces the image the manifests run with: `stable` for `maascontroller` and `aigatewaycontroller`, `main` for `batchgateway` and `aigrid`, and the current `rhoai-3.x` release branch for RHDS.
+Each component in `hack/scripts/get-manifests.sh` pins an ODH ref and an RHDS ref as `<branch>@<sha>`. The branch is the one whose Konflux build produces the image the manifests run with: `stable` for `maascontroller` and `aigatewaycontroller`, `main` for `batchgateway`, and the current `rhoai-3.x` release branch for RHDS. A `manual@<sha>` ref (aigrid) is bumped by hand — its pins deliberate release candidates — and the daily workflow leaves it alone.
 
 A daily GitHub Actions workflow (`.github/workflows/update-manifest-shas.yml`) bumps every ref to the tip of its branch, refreshes the trees, and opens a PR. When bumping manually, commit **both** the pin change and the refreshed trees:
 

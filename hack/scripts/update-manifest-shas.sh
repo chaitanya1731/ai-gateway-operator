@@ -45,6 +45,12 @@ latest_sha() {
 bump_ref() {
     local current_ref="$1" org="$2" repo="$3"
     local branch="${current_ref%@*}" current_sha="${current_ref##*@}"
+    # manual@<sha> refs are pinned by hand (e.g. release candidates) and never bumped.
+    if [[ "${branch}" == "manual" ]]; then
+        echo "  ${org}: manual pin, leaving as-is (${current_sha:0:8})" >&2
+        echo "${current_ref}"
+        return 0
+    fi
     if [[ "${current_ref}" != *@* || -z "${branch}" || ! "${current_sha}" =~ ^[0-9a-f]{40}$ ]]; then
         echo "[WARN] ${org}/${repo}: ref '${current_ref}' is not <branch>@<sha>" >&2
         return 1
